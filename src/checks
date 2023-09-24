@@ -1,0 +1,113 @@
+#!/bin/bash
+
+true=1
+false=0
+
+# проверка существования хотя бы одного аргумента
+function check_first_arg_exist {
+    if [[ -n ${1} ]]
+    then
+    result=$true
+    echo -en ${RED}"Take care about zero agrs, try again please...\n"${NCOLOR}
+    else
+    result=$false
+    fi
+    return $result
+}
+
+function check_integer {
+    result=$false
+    count=1
+    for argument in "$@"
+    do    
+    if [[ ! ${argument} =~ ^[0-9]*$ ]]
+    then
+    echo -en ${RED}"Value of arg #$count is not integer ($argument), please try again\n"${NCOLOR} && result=$true
+    fi
+    let count++
+    done
+    return $result;
+}
+
+function check_arguments {
+    result=$false
+    [ $1 -lt 4 ] && echo -en ${RED}"Arguments < 4, please start script with 4 arguments"${NCOLOR}  && echo && result=1
+    [ $1 -gt 4 ] && echo -en ${RED}"Arguments > 4, please start script with 4 arguments"${NCOLOR}  && echo && result=1
+    return $result
+}
+
+function check_sequence {
+    result=$false
+    [ $1 -eq $2 ] && echo -en ${RED}"Color of text & color of background (first arg & second arg) must be difference, please try again"${NCOLOR}  && echo && result=1
+    [ $3 -eq $4 ] && echo -en ${RED}"Color of text & color of background (third arg & forth arg) must be difference, please try again"${NCOLOR}  && echo && result=1
+    return ${result}
+}
+
+function check_number_of_color {
+    result=$false
+    count=1
+    for number in $1 $2 $3 $4
+    do
+    [ $number -lt 1 ] && echo -en ${RED}"Value of arg #$count less than 0, between 1 and 6, please try again"${NCOLOR} && echo && result=$true  
+    [ $number -gt 6 ] && echo -en ${RED}"Value of arg #$count more than 6, between 1 and 6, please try again"${NCOLOR} && echo && result=$true  
+    let count++
+    done
+    return $result
+}
+
+# функция проверки наличия аргумента-пути для анализа
+function check_path_existence_arg {
+    if [[ -z $1 ]]
+    then 
+    echo -en "${RED}There is no path to analize, please try again and fingerprint path with sign \"/\" at the end of path!\n${NCOLOR}"
+    result=1
+    else
+    result=0
+    fi
+    return ${result}
+}
+
+# функция проверки окончания аргумента на слэш /
+function check_end_slash {
+    if [[ "$1" == */ ]]
+    then
+    result=0
+    else 
+    result=1
+    echo -en "${RED}Please don't forgot to fingerprint sign \"/\" at the end of path\n${NCOLOR}"
+    fi
+    return ${result}
+}
+
+# проверка существования директории
+function check_existing_dir {
+    detect_colors ${ARRAY_COLORS_DEFAULT[*]}
+    if [ ! -d $1 ]
+    then
+    result=$true
+    echo -en "${RED}Path is not exist, please fingerprint another path\n${NCOLOR}"
+    else
+    result=$false
+    fi 
+    return ${result}
+}
+
+function check_arguments_part4 {
+    result=0
+    [ $1 -gt 0 ] && echo -en ${RED}"Arguments > 0, please start script with 0 arguments, colors confugure in configuration file"${NCOLOR}  && result=1 && echo 
+    return $result
+}
+
+function ckeck_number_of_args {
+    result=$false
+    if [ -z $1 ]
+    then
+    echo -en ${RED}"No parametr found, please take care about 1 parametr, it must be the path, that you want to analize!\n"${NCOLOR}
+    result=$true
+    elif [ $# -gt 1 ]
+    then
+    echo -en ${RED}"More than 1 parametr! Please take care about 1 parametr, it must be the path, that you want to analize!\n"${NCOLOR}
+    result=$true
+    fi
+    return $result
+}

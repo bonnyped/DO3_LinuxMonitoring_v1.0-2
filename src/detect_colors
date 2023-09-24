@@ -1,0 +1,57 @@
+#!/bin/bash
+
+ARRAY_COLORS_DEFAULT=(2 1 1 2)
+NAMES_OF_COLORS_ARRAY=('default' '(white)' '(red)' '(green)' ' (blue)'  '(purple)' '(black)')
+
+NCOLOR='\033[0m'
+WHITE='\033[37m'
+RED='\033[31m'
+GREEN='\033[32m'
+BLUE='\033[36m'
+PURPLE='\033[35m'
+BLACK='\033[30m'
+COLOR_ARRAY=($NCOLOR $WHITE $RED $GREEN $BLUE $PURPLE $BLACK)
+
+WHITE_BCKGRND='\033[47m'
+RED_BCKGRND='\033[41m'
+GREEN_BCKGRND='\033[42m'
+BLUE_BCKGRND='\033[46m'
+PURPLE_BCKGRND='\033[45m'
+BLACK_BCKGRND='\033[40m'
+BCKGRND_COLOR_ARRAY=($NCOLOR $WHITE_BCKGRND $RED_BCKGRND $GREEN_BCKGRND $BLUE_BCKGRND $PURPLE_BCKGRND $BLACK_BCKGRND)
+
+function detect_colors {
+    case $1 in 
+    [1*] ) COLOR_NAME=${BCKGRND_COLOR_ARRAY[$1]};;
+    [2*] ) COLOR_NAME=${BCKGRND_COLOR_ARRAY[$1]};;
+    [3*] ) COLOR_NAME=${BCKGRND_COLOR_ARRAY[$1]};;
+    [4*] ) COLOR_NAME=${BCKGRND_COLOR_ARRAY[$1]};;
+    [5*] ) COLOR_NAME=${BCKGRND_COLOR_ARRAY[$1]};;
+    [6*] ) COLOR_NAME=${BCKGRND_COLOR_ARRAY[$1]};;
+    esac
+    case $2 in 
+    [1*] ) COLOR_NAME+=${COLOR_ARRAY[$2]};;
+    [2*] ) COLOR_NAME+=${COLOR_ARRAY[$2]};;
+    [3*] ) COLOR_NAME+=${COLOR_ARRAY[$2]};;
+    [4*] ) COLOR_NAME+=${COLOR_ARRAY[$2]};;
+    [5*] ) COLOR_NAME+=${COLOR_ARRAY[$2]};;
+    [6*] ) COLOR_NAME+=${COLOR_ARRAY[$2]};;
+    esac
+    case $3 in 
+    [1*] ) COLOR_VALUE=${BCKGRND_COLOR_ARRAY[$3]};;
+    [2*] ) COLOR_VALUE=${BCKGRND_COLOR_ARRAY[$3]};;
+    [3*] ) COLOR_VALUE=${BCKGRND_COLOR_ARRAY[$3]};;
+    [4*] ) COLOR_VALUE=${BCKGRND_COLOR_ARRAY[$3]};;
+    [5*] ) COLOR_VALUE=${BCKGRND_COLOR_ARRAY[$3]};;
+    [6*] ) COLOR_VALUE=${BCKGRND_COLOR_ARRAY[$3]};;
+    esac
+    case $4 in 
+    [1*] ) COLOR_VALUE+=${COLOR_ARRAY[$4]};;
+    [2*] ) COLOR_VALUE+=${COLOR_ARRAY[$4]};;
+    [3*] ) COLOR_VALUE+=${COLOR_ARRAY[$4]};;
+    [4*] ) COLOR_VALUE+=${COLOR_ARRAY[$4]};;
+    [5*] ) COLOR_VALUE+=${COLOR_ARRAY[$4]};;
+    [6*] ) COLOR_VALUE+=${COLOR_ARRAY[$4]};;
+    esac
+}
+

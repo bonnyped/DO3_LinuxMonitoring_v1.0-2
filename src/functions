@@ -1,0 +1,112 @@
+#!/bin/bash
+
+function delete_status_file {
+    [ -e *.status ] && rm *.status 
+}
+
+function yes_or_no {
+    while true; do
+    echo -en $PURPLE"If you want to save this data \"Y/N\" to save this data in file: "$NCOLOR
+    read -r
+    case $REPLY in
+        [Yy] )  
+            delete_status_file;
+            ./part_2.sh > $(date +"%d_%m_%y_%H_%M_%S").status;
+            echo -en "${system_info}"
+            break;;
+        * ) 
+            echo; 
+            echo -e "${RED}$REPLY${NCOLOR} is not answer Y or y, thank's for using my script! Exiting..."; 
+            delete_status_file;
+            echo; 
+            exit;;
+    esac
+    done
+}
+
+function read_line_from_file {
+    COUNT=0
+    while IFS== read -r column_entity color_number; do
+        if [[ $color_number ]] 
+        then
+            ARRAY_COLORS_FROM_FILE[$COUNT]=${color_number}
+            to_print+=${column_entity}
+            to_print+=" = "
+            to_print+=${color_number}" "
+            to_print+=${NAMES_OF_COLORS_ARRAY[$color_number]}
+            to_print+="\n"
+            let COUNT++
+        else
+            ARRAY_COLORS_FROM_FILE[$COUNT]=${ARRAY_COLORS_DEFAULT[$COUNT]}
+            to_print+=${column_entity}
+            to_print+=" = "
+            to_print+=${NAMES_OF_COLORS_ARRAY[0]}" "
+            TMP=${ARRAY_COLORS_DEFAULT[$COUNT]}
+            to_print+=${NAMES_OF_COLORS_ARRAY[$TMP]}
+            to_print+="\n"
+            let COUNT++
+        fi
+    done < ./part4.conf
+}
+
+pattern='\.[^0-9\\\/:*?"<>|\s.]{1,255}$'
+top_ten=10
+
+function top_five_dir {
+    COUNT=1
+    [[ $total_folders -le 5 ]] && number_of_dir=${total_folders} || number_of_dir=5
+    echo $total_folders
+    while [ ${COUNT} -le ${number_of_dir} ]; do
+        top_five_folders+="\t"${COUNT}
+        top_five_folders+=" - "
+        top_five_folders+=$(du -hx ${1} 2>/dev/null | sort -rh | head -${COUNT} | tail +${COUNT} | awk '{print $2}')
+        top_five_folders+=", "
+        top_five_folders+=$(du -hx ${1} 2>/dev/null | sort -rh | head -${COUNT} | tail +${COUNT} | awk '{print $1}')
+        top_five_folders+="\n"
+        let COUNT++
+    done 
+}
+
+function top_ten_f {
+    COUNT=1
+    [[ $total_files -le ${top_ten} ]] && number_of_f=${total_files} || number_of_f=${top_ten}
+    while [ ${COUNT} -le ${number_of_f} ]; do
+        top_ten_files+="\t"${COUNT}
+        top_ten_files+=" - "
+        current_file=$(find ${1} -type f -exec du -Sh {} + 2>/dev/null | sort -rh |  head -${COUNT} | tail +${COUNT} | awk '{print $2}')
+        top_ten_files+=${current_file}
+        top_ten_files+=", "
+        top_ten_files+=$(find ${1} -type f -exec du -Sh {} + 2>/dev/null | sort -rh |  head -${COUNT} | tail +${COUNT} | awk '{print $1}')
+        [[ ${current_file} =~ ${pattern} ]] && top_ten_files+=","$(echo ${BASH_REMATCH} | sed 'y/\./ /')
+        top_ten_files+="\n"
+        let COUNT++
+    done
+}
+
+function top_ten_exe {
+    if [[ ${total_exec} -gt 0 ]]
+    then
+    COUNT=1
+    [[ $total_exec -le ${top_ten} ]] && number_of_exe=${total_exec} || number_of_exe=${top_ten}
+    list=$(find ${1} -type f 2>/dev/null) 
+    list=$(file ${list} | grep executable | awk '{print $1}' | sed 'y/:/ /') 
+    while [ ${COUNT} -le ${number_of_exe} ]; do
+        top_ten_exe_files+="\t"${COUNT}
+        top_ten_exe_files+=" - "
+        current_file=$(du ${list} -hx 2>/dev/null | sort -rh | head -${COUNT} | tail +${COUNT})
+        top_ten_exe_files+=$(echo ${current_file} | awk '{print $2}')", "
+        top_ten_exe_files+=" "
+        top_ten_exe_files+=$(echo ${current_file} | awk '{print $1}')
+        shsmm=$(sha1sum $(echo ${current_file} | awk '{print $2}'))
+        top_ten_exe_files+=", "$(echo ${shsmm} | awk '{print $1}')
+        top_ten_exe_files+="\n"
+        let COUNT++
+    done
+    fi
+}
+
+function count_exec_time {
+    end_time=$(date +%s.%N)
+    echo ${end_time}" "${start_time} | awk '{printf "%.1f", $1-$2}'
+    echo
+}
